@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хэллоуин - Сладость или Гадость</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.4s ease;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1a0000, #2d0000, #000);
+            color: #ff6f00;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .spider-web {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.05) 1px, transparent 2px),
+                radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.05) 1px, transparent 2px),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 1px, transparent 2px);
+            background-size: 100px 100px;
+            z-index: -1;
+        }
+
+        .floating-bats, .floating-spiders, .floating-skulls {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bat, .spider, .skull {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.6;
+            animation: float 15s infinite linear;
+        }
+
+        .bat { animation-duration: 20s; }
+        .spider { animation-duration: 25s; }
+        .skull { animation-duration: 30s; }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 30px rgba(255, 111, 0, 0.7);
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #ff6f00;
+            z-index: 1;
+        }
+
+        .chat-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            color: #ffcc00;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 #000, 0 0 10px #ff9900;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-family: 'Creepster', cursive;
+            font-size: 4rem;
+            margin-bottom: 30px;
+            color: #ff6f00;
+            text-shadow: 4px 4px 0 #000, 0 0 15px #ff4500;
+            letter-spacing: 3px;
+        }
+
+        .pumpkins {
+            font-size: 4rem;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+            text-shadow: 0 0 10px #ff8c00;
+        }
+
+        .buttons-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-option {
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            min-width: 200px;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-sweet {
+            background: linear-gradient(145deg, #ffb347, #ffcc33);
+            color: #ffffff; /* Изменено с коричневого на белый */
+        }
+
+        .btn-trick {
+            background: linear-gradient(145deg, #8b0000, #ff4500);
+            color: #fff;
+        }
+
+        .btn-option:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+        }
+
+        .btn-option:active {
+            transform: translateY(2px);
+        }
+
+        .or-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ff6f00;
+            text-shadow: 3px 3px 0 #000, 0 0 10px #ff4500;
+            margin: 0 15px;
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            color: #ccc;
+            max-width: 280px;
+            text-shadow: 1px 1px 0 #000;
+            font-weight: 700;
+        }
+
+        .result {
+            margin-top: 40px;
+            font-size: 2.5rem;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .big-emoji {
+            font-size: 8rem;
+            margin: 20px 0;
+            animation: pulse 1.5s infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 204, 51, 0.7));
+        }
+
+        /* Стили для выбора Сладости */
+        body.sweet-theme {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3, #ffcc80);
+            color: #8b4513;
+        }
+
+        body.sweet-theme .container {
+            background-color: rgba(255, 253, 247, 0.95);
+            box-shadow: 0 0 30px rgba(255, 204, 51, 0.7);
+            border: 3px solid #ffcc33;
+        }
+
+        body.sweet-theme .spider-web,
+        body.sweet-theme .floating-bats,
+        body.sweet-theme .floating-spiders,
+        body.sweet-theme .floating-skulls {
+            display: none;
+        }
+
+        /* Стили для выбора Гадости */
+        .fullscreen-trick {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+            z-index: 1000;
+        }
+
+        .warning-text {
+            font-size: 3.5rem;
+            color: #ff4500;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 4px 4px 0 #000, 0 0 15px #ff0000;
+            padding: 0 20px;
+            font-weight: 800;
+            animation: flicker 2s infinite;
+        }
+
+        .trick-button-full {
+            padding: 25px 50px;
+            font-size: 2.5rem;
+            background: linear-gradient(145deg, #8b0000, #ff4500);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
+            animation: pulse 1s infinite;
+            text-shadow: 2px 2px 0 #000;
+            font-weight: 800;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 8px; /* Уменьшено для меньшей заметности */
+            left: 8px; /* Уменьшено для меньшей заметности */
+            padding: 4px 8px; /* Сильно уменьшено */
+            background: rgba(20, 20, 20, 0.3); /* Более темный и прозрачный */
+            color: rgba(255, 255, 255, 0.5); /* Полупрозрачный текст */
+            border: 1px solid rgba(255, 111, 0, 0.3); /* Полупрозрачная граница */
+            border-radius: 3px; /* Меньший радиус */
+            cursor: pointer;
+            font-weight: 400; /* Не такой жирный */
+            z-index: 1001;
+            font-size: 0.7rem; /* Очень маленький шрифт */
+            opacity: 0.4; /* Почти прозрачный */
+            transition: opacity 0.3s;
+        }
+
+        .back-button:hover {
+            opacity: 0.8; /* Становится немного заметнее при наведении */
+            background: rgba(255, 111, 0, 0.2);
+        }
+
+        /* Анимации */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-10px) rotate(2deg); }
+            66% { transform: translateY(5px) rotate(-2deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes spooky {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-8px); }
+            100% { transform: translateX(0); }
+        }
+
+        .spooky-text {
+            color: #ff4500;
+            animation: spooky 0.5s infinite;
+            margin: 10px 0;
+            font-size: 2.5rem;
+            text-shadow: 3px 3px 0 #000;
+            font-weight: 800;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .chat-title {
+                font-size: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 3rem;
+            }
+            
+            .buttons-row {
+                flex-direction: column;
+            }
+            
+            .or-text {
+                margin: 10px 0;
+                font-size: 2rem;
+            }
+            
+            .btn-option {
+                font-size: 1.8rem;
+                padding: 15px 30px;
+            }
+            
+            .big-emoji {
+                font-size: 6rem;
+            }
+            
+            .warning-text {
+                font-size: 2.5rem;
+            }
+            
+            .trick-button-full {
+                font-size: 2rem;
+                padding: 20px 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chat-title {
+                font-size: 1.2rem;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .btn-option {
+                font-size: 1.5rem;
+                min-width: 240px;
+            }
+            
+            .explanation {
+                font-size: 1rem;
+            }
+            
+            .result {
+                font-size: 2rem;
+            }
+            
+            .big-emoji {
+                font-size: 5rem;
+            }
+            
+            .warning-text {
+                font-size: 2rem;
+            }
+            
+            .trick-button-full {
+                font-size: 1.5rem;
+                padding: 15px 30px;
+            }
+            
+            .back-button {
+                font-size: 0.6rem;
+                padding: 3px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="spider-web"></div>
+    
+    <div class="floating-bats">
+        <div class="bat" style="top: 10%; left: 5%;">🦇</div>
+        <div class="bat" style="top: 30%; left: 80%;">🦇</div>
+        <div class="bat" style="top: 70%; left: 15%;">🦇</div>
+    </div>
+    
+    <div class="floating-spiders">
+        <div class="spider" style="top: 20%; left: 70%;">🕷️</div>
+        <div class="spider" style="top: 60%; left: 30%;">🕷️</div>
+        <div class="spider" style="top: 80%; left: 85%;">🕷️</div>
+    </div>
+    
+    <div class="floating-skulls">
+        <div class="skull" style="top: 15%; left: 25%;">💀</div>
+        <div class="skull" style="top: 45%; left: 75%;">💀</div>
+        <div class="skull" style="top: 75%; left: 50%;">💀</div>
+    </div>
+
+    <div class="container" id="main-container">
+        <div class="chat-title">Чат Чилловых</div>
+        <h1>Сладость или Гадость?</h1>
+        
+        <div class="pumpkins">🎃 🎃 🎃</div>
+        
+        <div class="buttons-row">
+            <div>
+                <button class="btn-option btn-sweet" onclick="chooseSweet()">Сладость</button>
+                <p class="explanation">Дождаться 29 Сентября, чтобы узнать информацию официально</p>
+            </div>
+            
+            <div class="or-text">или</div>
+            
+            <div>
+                <button class="btn-option btn-trick" onclick="chooseTrick()">Гадость</button>
+                <p class="explanation">Узнать информацию про новое событие ПРЯМО СЕЙЧАС!</p>
+            </div>
+        </div>
+        
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        let trickClicks = 0;
+        
+        function chooseSweet() {
+            document.body.classList.add('sweet-theme');
+            
+            // Прячем все элементы, кроме результата
+            document.querySelector('.chat-title').style.display = 'none';
+            document.querySelector('h1').style.display = 'none';
+            document.querySelector('.pumpkins').style.display = 'none';
+            document.querySelector('.buttons-row').style.display = 'none';
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <div class="big-emoji">🍭</div>
+                <div>Ты выбрал Сладость! Удачи в ожидании!</div>
+            `;
+            
+            // Увеличиваем контейнер
+            document.getElementById('main-container').style.maxWidth = '600px';
+            document.getElementById('main-container').style.padding = '50px 30px';
+        }
+        
+        function chooseTrick() {
+            // Создаем полноэкранный режим для кнопки "Гадость"
+            const fullscreenDiv = document.createElement('div');
+            fullscreenDiv.className = 'fullscreen-trick';
+            fullscreenDiv.id = 'fullscreen-trick';
+            
+            // Добавляем кнопку возврата (очень маленькую)
+            const backButton = document.createElement('button');
+            backButton.className = 'back-button';
+            backButton.textContent = 'Вернуться';
+            backButton.onclick = function() {
+                document.body.removeChild(fullscreenDiv);
+                trickClicks = 0;
+            };
+            
+            // Добавляем предупреждающий текст
+            const warningText = document.createElement('div');
+            warningText.className = 'warning-text';
+            warningText.id = 'warning-text';
+            warningText.textContent = 'Точно?';
+            
+            // Создаем увеличенную кнопку
+            const trickButton = document.createElement('button');
+            trickButton.className = 'trick-button-full';
+            trickButton.textContent = 'Гадость';
+            trickButton.onclick = handleTrickClick;
+            
+            fullscreenDiv.appendChild(backButton);
+            fullscreenDiv.appendChild(warningText);
+            fullscreenDiv.appendChild(trickButton);
+            document.body.appendChild(fullscreenDiv);
+            
+            trickClicks = 1;
+        }
+        
+        function handleTrickClick() {
+            trickClicks++;
+            const warningText = document.getElementById('warning-text');
+            const trickButton = document.querySelector('.trick-button-full');
+            
+            // Увеличиваем кнопку с каждым нажатием
+            trickButton.style.transform = `scale(${1 + trickClicks * 0.1})`;
+            
+            // Меняем текст в зависимости от количества нажатий
+            if (trickClicks === 2) {
+                warningText.textContent = 'Ты Уверен?';
+            } else if (trickClicks === 3) {
+                warningText.textContent = 'Ты будешь Проклят!';
+            } else if (trickClicks === 4) {
+                warningText.textContent = 'ТЫ ХОЧЕШЬ БЫТЬ ПРОКЛЯТЫМ?!';
+            } else if (trickClicks === 5) {
+                warningText.textContent = 'ОДУМАЙСЯ.';
+            } else if (trickClicks >= 6) {
+                // Открываем ссылку после 6 нажатия
+                window.location.href = 'https://telegra.ph/NOVOE-SOBYTIE---SLADOST-ILI-GADOST-09-07';
+            }
+        }
+        
+        // Создаем плавающие элементы
+        function createFloatingElements() {
+            const bats = document.querySelectorAll('.bat');
+            const spiders = document.querySelectorAll('.spider');
+            const skulls = document.querySelectorAll('.skull');
+            
+            bats.forEach(bat => {
+                bat.style.animationDelay = `${Math.random() * 5}s`;
+            });
+            
+            spiders.forEach(spider => {
+                spider.style.animationDelay = `${Math.random() * 5}s`;
+            });
+            
+            skulls.forEach(skull => {
+                skull.style.animationDelay = `${Math.random() * 5}s`;
+            });
+        }
+        
+        // Запускаем анимацию после загрузки страницы
+        window.onload = createFloatingElements;
+    </script>
+</body>
+</html>
