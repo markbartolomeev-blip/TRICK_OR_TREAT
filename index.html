@@ -255,33 +255,6 @@
             transform: scale(1.05);
         }
 
-        /* Кнопка активации звука */
-        .sound-activator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 15px;
-            background: rgba(255, 111, 0, 0.8);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5rem;
-            z-index: 1000;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px rgba(255, 111, 0, 0.5);
-            animation: pulse 2s infinite;
-        }
-
-        .sound-activator:hover {
-            background: rgba(255, 111, 0, 1);
-            transform: scale(1.1);
-        }
-
         /* Анимации */
         @keyframes float {
             0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -393,26 +366,10 @@
                 font-size: 1rem;
                 padding: 10px 20px;
             }
-            
-            .sound-activator {
-                width: 50px;
-                height: 50px;
-                font-size: 1.3rem;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Аудио элемент для фоновой музыки -->
-    <audio id="backgroundMusic" loop>
-        <!-- Прямая ссылка на музыку из Google Drive -->
-        <source src="https://drive.google.com/uc?export=download&id=1svAMwZHHskq6DXsTaGoxeWN1jX7ij2L7" type="audio/mpeg">
-        Ваш браузер не поддерживает элемент audio.
-    </audio>
-    
-    <!-- Кнопка активации звука (скрыта по умолчанию) -->
-    <button class="sound-activator" id="soundActivator" style="display: none;">🔊</button>
-    
     <div class="spider-web"></div>
     
     <div class="floating-bats">
@@ -458,32 +415,6 @@
 
     <script>
         let trickClicks = 0;
-        const backgroundMusic = document.getElementById('backgroundMusic');
-        const soundActivator = document.getElementById('soundActivator');
-        
-        // Функция для запуска музыки
-        function playMusic() {
-            backgroundMusic.play()
-                .then(() => {
-                    console.log('Музыка успешно запущена');
-                    soundActivator.style.display = 'none'; // Скрываем кнопку активации
-                })
-                .catch(error => {
-                    console.log('Автовоспроизведение заблокировано. Нажмите на кнопку для включения музыки.');
-                    soundActivator.style.display = 'flex'; // Показываем кнопку активации
-                });
-        }
-        
-        // Попытка автоматического запуска музыки при загрузке страницы
-        window.addEventListener('load', function() {
-            // Ждем немного перед запуском музыки
-            setTimeout(playMusic, 1000);
-        });
-        
-        // Обработчик клика по кнопке активации звука
-        soundActivator.addEventListener('click', function() {
-            playMusic();
-        });
         
         function chooseSweet() {
             document.body.classList.add('sweet-theme');
