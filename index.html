@@ -177,7 +177,6 @@
             filter: drop-shadow(0 0 10px rgba(255, 204, 51, 0.7));
         }
 
-        /* Стили для выбора Сладости */
         body.sweet-theme {
             background: linear-gradient(135deg, #fff8e1, #ffecb3, #ffcc80);
             color: #8b4513;
@@ -196,7 +195,6 @@
             display: none;
         }
 
-        /* Стили для выбора Гадости */
         .fullscreen-trick {
             position: fixed;
             top: 0;
@@ -255,7 +253,6 @@
             transform: scale(1.05);
         }
 
-        /* Стили для скримеров */
         .scrimer {
             position: fixed;
             top: 0;
@@ -283,7 +280,6 @@
             20%, 40%, 60%, 80% { transform: translateX(10px) translateY(10px); }
         }
 
-        /* Анимации */
         @keyframes float {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             33% { transform: translateY(-10px) rotate(2deg); }
@@ -317,7 +313,6 @@
             font-weight: 800;
         }
 
-        /* Адаптивность */
         @media (max-width: 768px) {
             .chat-title {
                 font-size: 1.5rem;
@@ -452,134 +447,87 @@
     <script>
         let trickClicks = 0;
         
-        // Функция для воспроизведения усиленного зловещего смеха
+        // Упрощенные функции звука - только базовые осцилляторы
         function playEvilLaugh() {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
                 
-                for (let i = 0; i < 4; i++) {
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    const filter = audioContext.createBiquadFilter();
-                    
-                    // Используем более мрачные типы волн
-                    const waveTypes = ['sawtooth', 'square', 'sawtooth', 'square'];
-                    oscillator.type = waveTypes[i];
-                    
-                    // Более низкие частоты для мрачности
-                    const baseFreq = 100 + (i * 30);
-                    oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(baseFreq + 150, audioContext.currentTime + 0.6);
-                    
-                    // Увеличиваем громкость
-                    gainNode.gain.setValueAtTime(0.5 - (i * 0.1), audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.5 + (i * 0.1));
-                    
-                    // Добавляем низкочастотный фильтр для мрачности
-                    filter.type = 'lowpass';
-                    filter.frequency.setValueAtTime(500, audioContext.currentTime);
-                    
-                    oscillator.connect(filter);
-                    filter.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.start();
-                    oscillator.stop(audioContext.currentTime + 1.8);
-                }
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
                 
+                gainNode.gain.setValueAtTime(0.7, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.5);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 1.8);
             } catch (e) {
                 console.log("Аудио не поддерживается");
             }
         }
         
-        // Функция для воспроизведения усиленного крика
         function playScream() {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
                 
-                for (let i = 0; i < 5; i++) {
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    const filter = audioContext.createBiquadFilter();
-                    
-                    const waveTypes = ['sawtooth', 'square', 'sawtooth', 'square', 'sawtooth'];
-                    oscillator.type = waveTypes[i];
-                    
-                    // Более резкие и высокие частоты для крика
-                    const baseFreq = 400 + (i * 80);
-                    oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(baseFreq + 500, audioContext.currentTime + 0.4);
-                    
-                    // Увеличиваем громкость
-                    gainNode.gain.setValueAtTime(0.6 - (i * 0.1), audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.9 + (i * 0.1));
-                    
-                    // Добавляем фильтр для более резкого звука
-                    filter.type = 'highpass';
-                    filter.frequency.setValueAtTime(300, audioContext.currentTime);
-                    
-                    oscillator.connect(filter);
-                    filter.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.start();
-                    oscillator.stop(audioContext.currentTime + 1.0);
-                }
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.4);
                 
+                gainNode.gain.setValueAtTime(0.8, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.9);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 1.0);
             } catch (e) {
                 console.log("Аудио не поддерживается");
             }
         }
         
-        // Функция для воспроизведения усиленного Halloween Spirit звука
         function playHalloweenSpirit() {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // Создаем более сложный звук с несколькими осцилляторами
-                for (let i = 0; i < 6; i++) {
+                // Создаем 3 осциллятора для более полного звука
+                for (let i = 0; i < 3; i++) {
                     const oscillator = audioContext.createOscillator();
                     const gainNode = audioContext.createGain();
-                    const filter = audioContext.createBiquadFilter();
                     
-                    // Разные типы волн для каждого осциллятора
-                    const waveTypes = ['sawtooth', 'square', 'sine', 'triangle', 'sawtooth', 'square'];
-                    oscillator.type = waveTypes[i];
+                    oscillator.type = i === 0 ? 'sawtooth' : 'square';
                     
-                    // Более низкие и мрачные частоты
-                    const baseFreq = 60 + (i * 35);
+                    const baseFreq = 60 + (i * 40);
                     oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
                     
-                    // Добавляем модуляцию частоты для более интересного звука
                     if (i % 2 === 0) {
-                        oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, audioContext.currentTime + 0.8);
+                        oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 1.8, audioContext.currentTime + 0.8);
                     } else {
-                        oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 0.7, audioContext.currentTime + 0.6);
+                        oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 0.6, audioContext.currentTime + 0.6);
                     }
                     
-                    // Настраиваем фильтр для каждого осциллятора
-                    filter.type = 'bandpass';
-                    filter.frequency.setValueAtTime(300 + (i * 80), audioContext.currentTime);
-                    filter.Q.setValueAtTime(20, audioContext.currentTime);
+                    // Максимальная громкость
+                    gainNode.gain.setValueAtTime(0.9, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1.8);
                     
-                    // Увеличиваем громкость
-                    gainNode.gain.setValueAtTime(0.3 - (i * 0.04), audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1.2 + (i * 0.1));
-                    
-                    oscillator.connect(filter);
-                    filter.connect(gainNode);
+                    oscillator.connect(gainNode);
                     gainNode.connect(audioContext.destination);
                     
                     oscillator.start();
-                    oscillator.stop(audioContext.currentTime + 1.4);
+                    oscillator.stop(audioContext.currentTime + 2.0);
                 }
-                
             } catch (e) {
                 console.log("Аудио не поддерживается");
             }
         }
         
-        // Функция для создания вибрации
         function vibrate() {
             if (navigator.vibrate) {
                 navigator.vibrate([100, 50, 100, 50, 200]);
@@ -640,15 +588,12 @@
             const warningText = document.getElementById('warning-text');
             const trickButton = document.querySelector('.trick-button-full');
             
-            // Увеличиваем кнопку с каждым нажатием
             trickButton.style.transform = `scale(${1 + trickClicks * 0.1})`;
             
-            // Показываем скример при каждом нажатии (только 4 эмодзи)
             const emojis = ['🎃', '👻', '😈', '💀'];
             const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
             showScrimer(randomEmoji);
             
-            // Воспроизводим разные звуки в зависимости от клика
             if (trickClicks === 1) {
                 playScream();
                 warningText.textContent = 'Ты Уверен?';
@@ -668,11 +613,9 @@
                 window.location.href = 'https://telegra.ph/NOVOE-SOBYTIE---SLADOST-ILI-GADOST-09-07';
             }
             
-            // Включаем вибрацию
             vibrate();
         }
         
-        // Функция для показа скримера
         function showScrimer(emoji) {
             const scrimer = document.createElement('div');
             scrimer.className = 'scrimer';
@@ -684,12 +627,10 @@
             scrimer.appendChild(scrimerEmoji);
             document.body.appendChild(scrimer);
             
-            // Показываем скример без задержки
             setTimeout(() => {
                 scrimer.style.opacity = 1;
             }, 10);
             
-            // Убираем скример быстрее (через 0.8 секунды)
             setTimeout(() => {
                 scrimer.style.opacity = 0;
                 setTimeout(() => {
@@ -700,7 +641,6 @@
             }, 800);
         }
         
-        // Создаем плавающие элементы
         function createFloatingElements() {
             const bats = document.querySelectorAll('.bat');
             const spiders = document.querySelectorAll('.spider');
@@ -715,11 +655,10 @@
             });
             
             skulls.forEach(skull => {
-                skull.style.animationDelay = `${Math.random() * 5)s`;
+                skull.style.animationDelay = `${Math.random() * 5}s`;
             });
         }
         
-        // Запускаем анимацию после загрузки страницы
         window.onload = createFloatingElements;
     </script>
 </body>
