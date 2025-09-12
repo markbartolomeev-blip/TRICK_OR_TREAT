@@ -255,6 +255,34 @@
             transform: scale(1.05);
         }
 
+        /* Стили для скримеров */
+        .scrimer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        
+        .scrimer-emoji {
+            font-size: 20rem;
+            animation: scrimer-shake 0.5s infinite;
+        }
+        
+        @keyframes scrimer-shake {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px) translateY(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px) translateY(10px); }
+        }
+
         /* Анимации */
         @keyframes float {
             0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -325,6 +353,10 @@
                 font-size: 2rem;
                 padding: 20px 40px;
             }
+            
+            .scrimer-emoji {
+                font-size: 15rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -365,6 +397,10 @@
             .back-button {
                 font-size: 1rem;
                 padding: 10px 20px;
+            }
+            
+            .scrimer-emoji {
+                font-size: 10rem;
             }
         }
     </style>
@@ -416,10 +452,143 @@
     <script>
         let trickClicks = 0;
         
+        // Функция для воспроизведения усиленного зловещего смеха
+        function playEvilLaugh() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                for (let i = 0; i < 4; i++) {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    const filter = audioContext.createBiquadFilter();
+                    
+                    // Используем более мрачные типы волн
+                    const waveTypes = ['sawtooth', 'square', 'sawtooth', 'square'];
+                    oscillator.type = waveTypes[i];
+                    
+                    // Более низкие частоты для мрачности
+                    const baseFreq = 100 + (i * 30);
+                    oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(baseFreq + 150, audioContext.currentTime + 0.6);
+                    
+                    // Увеличиваем громкость
+                    gainNode.gain.setValueAtTime(0.5 - (i * 0.1), audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.5 + (i * 0.1));
+                    
+                    // Добавляем низкочастотный фильтр для мрачности
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(500, audioContext.currentTime);
+                    
+                    oscillator.connect(filter);
+                    filter.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 1.8);
+                }
+                
+            } catch (e) {
+                console.log("Аудио не поддерживается");
+            }
+        }
+        
+        // Функция для воспроизведения усиленного крика
+        function playScream() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                for (let i = 0; i < 5; i++) {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    const filter = audioContext.createBiquadFilter();
+                    
+                    const waveTypes = ['sawtooth', 'square', 'sawtooth', 'square', 'sawtooth'];
+                    oscillator.type = waveTypes[i];
+                    
+                    // Более резкие и высокие частоты для крика
+                    const baseFreq = 400 + (i * 80);
+                    oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(baseFreq + 500, audioContext.currentTime + 0.4);
+                    
+                    // Увеличиваем громкость
+                    gainNode.gain.setValueAtTime(0.6 - (i * 0.1), audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.9 + (i * 0.1));
+                    
+                    // Добавляем фильтр для более резкого звука
+                    filter.type = 'highpass';
+                    filter.frequency.setValueAtTime(300, audioContext.currentTime);
+                    
+                    oscillator.connect(filter);
+                    filter.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 1.0);
+                }
+                
+            } catch (e) {
+                console.log("Аудио не поддерживается");
+            }
+        }
+        
+        // Функция для воспроизведения усиленного Halloween Spirit звука
+        function playHalloweenSpirit() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Создаем более сложный звук с несколькими осцилляторами
+                for (let i = 0; i < 6; i++) {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    const filter = audioContext.createBiquadFilter();
+                    
+                    // Разные типы волн для каждого осциллятора
+                    const waveTypes = ['sawtooth', 'square', 'sine', 'triangle', 'sawtooth', 'square'];
+                    oscillator.type = waveTypes[i];
+                    
+                    // Более низкие и мрачные частоты
+                    const baseFreq = 60 + (i * 35);
+                    oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+                    
+                    // Добавляем модуляцию частоты для более интересного звука
+                    if (i % 2 === 0) {
+                        oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, audioContext.currentTime + 0.8);
+                    } else {
+                        oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 0.7, audioContext.currentTime + 0.6);
+                    }
+                    
+                    // Настраиваем фильтр для каждого осциллятора
+                    filter.type = 'bandpass';
+                    filter.frequency.setValueAtTime(300 + (i * 80), audioContext.currentTime);
+                    filter.Q.setValueAtTime(20, audioContext.currentTime);
+                    
+                    // Увеличиваем громкость
+                    gainNode.gain.setValueAtTime(0.3 - (i * 0.04), audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1.2 + (i * 0.1));
+                    
+                    oscillator.connect(filter);
+                    filter.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 1.4);
+                }
+                
+            } catch (e) {
+                console.log("Аудио не поддерживается");
+            }
+        }
+        
+        // Функция для создания вибрации
+        function vibrate() {
+            if (navigator.vibrate) {
+                navigator.vibrate([100, 50, 100, 50, 200]);
+            }
+        }
+        
         function chooseSweet() {
             document.body.classList.add('sweet-theme');
             
-            // Прячем все элементы, кроме результата
             document.querySelector('.chat-title').style.display = 'none';
             document.querySelector('h1').style.display = 'none';
             document.querySelector('.pumpkins').style.display = 'none';
@@ -431,30 +600,25 @@
                 <div>Ты выбрал Сладость! Удачи в ожидании!</div>
             `;
             
-            // Увеличиваем контейнер
             document.getElementById('main-container').style.maxWidth = '600px';
             document.getElementById('main-container').style.padding = '50px 30px';
         }
         
         function chooseTrick() {
-            // Создаем полноэкранный режим для кнопки "Гадость"
             const fullscreenDiv = document.createElement('div');
             fullscreenDiv.className = 'fullscreen-trick';
             fullscreenDiv.id = 'fullscreen-trick';
             
-            // Добавляем предупреждающий текст
             const warningText = document.createElement('div');
             warningText.className = 'warning-text';
             warningText.id = 'warning-text';
             warningText.textContent = 'Точно?';
             
-            // Создаем увеличенную кнопку
             const trickButton = document.createElement('button');
             trickButton.className = 'trick-button-full';
             trickButton.textContent = 'Гадость';
             trickButton.onclick = handleTrickClick;
             
-            // Добавляем кнопку возврата (под кнопкой Гадость)
             const backButton = document.createElement('button');
             backButton.className = 'back-button';
             backButton.textContent = 'Вернуться к выбору';
@@ -479,19 +643,61 @@
             // Увеличиваем кнопку с каждым нажатием
             trickButton.style.transform = `scale(${1 + trickClicks * 0.1})`;
             
-            // Меняем текст в зависимости от количества нажатий
-            if (trickClicks === 2) {
+            // Показываем скример при каждом нажатии (только 4 эмодзи)
+            const emojis = ['🎃', '👻', '😈', '💀'];
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            showScrimer(randomEmoji);
+            
+            // Воспроизводим разные звуки в зависимости от клика
+            if (trickClicks === 1) {
+                playScream();
                 warningText.textContent = 'Ты Уверен?';
-            } else if (trickClicks === 3) {
+            } else if (trickClicks === 2) {
+                playEvilLaugh();
                 warningText.textContent = 'Ты будешь Проклят!';
-            } else if (trickClicks === 4) {
+            } else if (trickClicks === 3) {
+                playHalloweenSpirit();
                 warningText.textContent = 'ТЫ ХОЧЕШЬ БЫТЬ ПРОКЛЯТЫМ?!';
-            } else if (trickClicks === 5) {
+            } else if (trickClicks === 4) {
+                playHalloweenSpirit();
                 warningText.textContent = 'ОДУМАЙСЯ.';
+            } else if (trickClicks === 5) {
+                playHalloweenSpirit();
+                warningText.textContent = 'ПОЗДНО ОТСТУПАТЬ!';
             } else if (trickClicks >= 6) {
-                // Открываем ссылку после 6 нажатия
                 window.location.href = 'https://telegra.ph/NOVOE-SOBYTIE---SLADOST-ILI-GADOST-09-07';
             }
+            
+            // Включаем вибрацию
+            vibrate();
+        }
+        
+        // Функция для показа скримера
+        function showScrimer(emoji) {
+            const scrimer = document.createElement('div');
+            scrimer.className = 'scrimer';
+            
+            const scrimerEmoji = document.createElement('div');
+            scrimerEmoji.className = 'scrimer-emoji';
+            scrimerEmoji.textContent = emoji;
+            
+            scrimer.appendChild(scrimerEmoji);
+            document.body.appendChild(scrimer);
+            
+            // Показываем скример без задержки
+            setTimeout(() => {
+                scrimer.style.opacity = 1;
+            }, 10);
+            
+            // Убираем скример быстрее (через 0.8 секунды)
+            setTimeout(() => {
+                scrimer.style.opacity = 0;
+                setTimeout(() => {
+                    if (document.body.contains(scrimer)) {
+                        document.body.removeChild(scrimer);
+                    }
+                }, 200);
+            }, 800);
         }
         
         // Создаем плавающие элементы
@@ -509,7 +715,7 @@
             });
             
             skulls.forEach(skull => {
-                skull.style.animationDelay = `${Math.random() * 5}s`;
+                skull.style.animationDelay = `${Math.random() * 5)s`;
             });
         }
         
