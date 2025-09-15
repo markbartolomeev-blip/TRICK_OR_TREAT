@@ -246,6 +246,13 @@
             font-size: 1.1rem;
             opacity: 1;
             transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        
+        .back-button.big {
+            padding: 20px 40px;
+            font-size: 2rem;
+            margin-bottom: 30px;
         }
 
         .back-button:hover {
@@ -272,6 +279,15 @@
         .scrimer-emoji {
             font-size: 20rem;
             animation: scrimer-shake 0.5s infinite;
+        }
+
+        .final-message {
+            font-size: 4rem;
+            color: #ffcc00;
+            text-align: center;
+            text-shadow: 3px 3px 0 #000, 0 0 20px #ff9900;
+            font-weight: 800;
+            animation: pulse 1s infinite;
         }
         
         @keyframes scrimer-shake {
@@ -352,6 +368,15 @@
             .scrimer-emoji {
                 font-size: 15rem;
             }
+
+            .final-message {
+                font-size: 3rem;
+            }
+            
+            .back-button.big {
+                padding: 15px 30px;
+                font-size: 1.5rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -396,6 +421,10 @@
             
             .scrimer-emoji {
                 font-size: 10rem;
+            }
+
+            .final-message {
+                font-size: 2.2rem;
             }
         }
     </style>
@@ -446,53 +475,9 @@
 
     <script>
         let trickClicks = 0;
+        let fullscreenDiv = null;
         
         // Упрощенные функции звука - только базовые осцилляторы
-        function playEvilLaugh() {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.type = 'sawtooth';
-                oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
-                
-                gainNode.gain.setValueAtTime(0.7, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.5);
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 1.8);
-            } catch (e) {
-                console.log("Аудио не поддерживается");
-            }
-        }
-        
-        function playScream() {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.type = 'sawtooth';
-                oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.4);
-                
-                gainNode.gain.setValueAtTime(0.8, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.9);
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 1.0);
-            } catch (e) {
-                console.log("Аудио не поддерживается");
-            }
-        }
-        
         function playHalloweenSpirit() {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -553,7 +538,12 @@
         }
         
         function chooseTrick() {
-            const fullscreenDiv = document.createElement('div');
+            // Удаляем предыдущий fullscreen, если он есть
+            if (fullscreenDiv && document.body.contains(fullscreenDiv)) {
+                document.body.removeChild(fullscreenDiv);
+            }
+            
+            fullscreenDiv = document.createElement('div');
             fullscreenDiv.className = 'fullscreen-trick';
             fullscreenDiv.id = 'fullscreen-trick';
             
@@ -571,8 +561,11 @@
             backButton.className = 'back-button';
             backButton.textContent = 'Вернуться к выбору';
             backButton.onclick = function() {
-                document.body.removeChild(fullscreenDiv);
+                if (fullscreenDiv && document.body.contains(fullscreenDiv)) {
+                    document.body.removeChild(fullscreenDiv);
+                }
                 trickClicks = 0;
+                fullscreenDiv = null;
             };
             
             fullscreenDiv.appendChild(warningText);
@@ -581,36 +574,72 @@
             document.body.appendChild(fullscreenDiv);
             
             trickClicks = 1;
+            playHalloweenSpirit();
         }
         
         function handleTrickClick() {
             trickClicks++;
+            playHalloweenSpirit();
+            
             const warningText = document.getElementById('warning-text');
             const trickButton = document.querySelector('.trick-button-full');
+            const backButton = document.querySelector('.back-button');
+            
+            if (!warningText || !trickButton || !backButton) return;
             
             trickButton.style.transform = `scale(${1 + trickClicks * 0.1})`;
             
             const emojis = ['🎃', '👻', '😈', '💀'];
             const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-            showScrimer(randomEmoji);
             
+            // После 8 клика делаем кнопку "Вернуться к выбору" большой и перемещаем вверх
+            if (trickClicks >= 8) {
+                backButton.classList.add('big');
+                // Перемещаем кнопку назад наверх
+                const fullscreenDiv = document.getElementById('fullscreen-trick');
+                if (fullscreenDiv) {
+                    fullscreenDiv.insertBefore(backButton, warningText.nextSibling);
+                }
+            }
+            
+            // Сообщения для каждого клика
             if (trickClicks === 1) {
-                playScream();
-                warningText.textContent = 'Ты Уверен?';
+                warningText.textContent = 'Точно?';
+                showScrimer(randomEmoji);
             } else if (trickClicks === 2) {
-                playEvilLaugh();
-                warningText.textContent = 'Ты будешь Проклят!';
+                warningText.textContent = 'Ты уверен?';
+                showScrimer(randomEmoji);
             } else if (trickClicks === 3) {
-                playHalloweenSpirit();
-                warningText.textContent = 'ТЫ ХОЧЕШЬ БЫТЬ ПРОКЛЯТЫМ?!';
+                warningText.textContent = 'Ты будешь проклят!';
+                showScrimer(randomEmoji);
             } else if (trickClicks === 4) {
-                playHalloweenSpirit();
-                warningText.textContent = 'ОДУМАЙСЯ.';
+                warningText.textContent = 'Ты хочешь быть проклятым?';
+                showScrimer(randomEmoji);
             } else if (trickClicks === 5) {
-                playHalloweenSpirit();
-                warningText.textContent = 'ЕЩЕ НЕ ПОЗДНО ОСТУПИТЬ!';
-            } else if (trickClicks >= 6) {
-                window.location.href = 'https://telegra.ph/NOVOE-SOBYTIE---SLADOST-ILI-GADOST-09-07';
+                warningText.textContent = 'Одумайся!';
+                showScrimer(randomEmoji);
+            } else if (trickClicks === 6) {
+                warningText.textContent = 'Еще не поздно отступить!';
+                showScrimer(randomEmoji);
+            } else if (trickClicks === 7) {
+                warningText.textContent = 'ХВАТИТ!';
+                showScrimer(randomEmoji);
+            } else if (trickClicks === 8) {
+                warningText.textContent = 'ПРЕКРАТИ!';
+                showScrimer(randomEmoji);
+            } else if (trickClicks === 9) {
+                warningText.textContent = 'Marina VIP Lux mater phocae infantis';
+                showScrimer(randomEmoji);
+            } else if (trickClicks === 10) {
+                warningText.textContent = 'Гадость, так гадость….';
+                // Скрываем кнопки
+                trickButton.style.display = 'none';
+                backButton.style.display = 'none';
+                
+                // Плавный переход на сайт
+                setTimeout(() => {
+                    window.location.href = 'https://telegra.ph/NOVOE-SOBYTIE---SLADOST-ILI-GADOST-09-07';
+                }, 1500);
             }
             
             vibrate();
